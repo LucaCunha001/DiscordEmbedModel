@@ -1,5 +1,5 @@
 import discord
-from .buttons import EditButton, SendButton, FooterButton, AddFieldButton
+from . import EmbedGenerator
 from .modals import EditFieldModal
 
 class RemoverFieldMenus(discord.ui.Select):
@@ -117,7 +117,7 @@ class LinguagemSelect(discord.ui.Select):
 		js_code = "const embed = {\n"
 		js_code += f'	title: "{embed.title}",\n'
 		js_code += f'	description: "{descricao}",\n'
-		js_code += f'	color: {embed.colour.value if embed.colour else "null"},\n'
+		js_code += f'	color: {'"#{:06X}"'.format(embed.colour.value) if embed.colour else 'null'},\n'
 		js_code += f'	timestamp: "{embed.timestamp.isoformat()}"' if embed.timestamp else ""
 		if embed.author:
 			js_code += f',\n	author: {{\n		name: "{embed.author.name}"'
@@ -152,16 +152,3 @@ class LinguagemSelect(discord.ui.Select):
 
 		# Responder com o código correspondente
 		await interaction.response.send_message(code, ephemeral=True)
-
-class EmbedGenerator(discord.ui.View):
-	def __init__(self, msg: discord.Message):
-		super().__init__(timeout=None)
-		self.add_item(EditButton(msg, 0))
-		self.add_item(EditButton(msg, 1))
-		self.add_item(FooterButton(msg))
-		self.add_item(AddFieldButton(msg))
-		self.add_item(SendButton(msg))
-		if msg.embeds[0].fields:
-			self.add_item(RemoverFieldMenus(msg))
-			self.add_item(EditarFieldMenus(msg))
-		self.add_item(LinguagemSelect())

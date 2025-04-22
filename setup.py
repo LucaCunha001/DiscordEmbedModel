@@ -1,8 +1,13 @@
 from setuptools import setup, find_packages
+import json
+
+with open("info.json", "r", encoding="utf-8") as f:
+    versao: dict = json.load(f)
+    versao: str = versao['versão']
 
 setup(
     name="embed_model",
-    version="0.3",
+    version=versao,
     packages=find_packages(),
     install_requires=[
         "discord"

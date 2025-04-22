@@ -1,14 +1,28 @@
 import discord
 from discord import app_commands
 import json
-from .menus import EmbedGenerator
 
-class EmbedModelCommands(app_commands.AppCommandGroup):
+class EmbedGenerator(discord.ui.View):
+	def __init__(self, msg: discord.Message):
+		from .menus import EditarFieldMenus, RemoverFieldMenus, LinguagemSelect
+		from .buttons import EditButton, FooterButton, AddFieldButton, SendButton
+		super().__init__(timeout=None)
+		self.add_item(EditButton(msg, 0))
+		self.add_item(EditButton(msg, 1))
+		self.add_item(FooterButton(msg))
+		self.add_item(AddFieldButton(msg))
+		self.add_item(SendButton(msg))
+		if msg.embeds[0].fields:
+			self.add_item(RemoverFieldMenus(msg))
+			self.add_item(EditarFieldMenus(msg))
+		self.add_item(LinguagemSelect())
+
+class EmbedModelCommands(app_commands.Group):
 	def __init__(self, bot: discord.Client):
-		super().__init__()
+		super().__init__(name="embed", description="Comandos padrões de embeds.")
 		self.bot = bot
 
-	@app_commands.command(name="embed", description="Cria um embed")
+	@app_commands.command(name="create", description="Cria um embed")
 	@app_commands.checks.has_permissions(manage_webhooks=True)
 	@app_commands.describe(
 		template="Um template do embed que será editado"
@@ -80,3 +94,58 @@ class EmbedModelCommands(app_commands.AppCommandGroup):
 		await interaction.followup.send(content=content, embed=embed, ephemeral=True)
 		msg = await interaction.original_response()
 		await msg.edit(view=EmbedGenerator(msg))
+	
+	@app_commands.command(name="json", description="Ajuda com o modelo JSON dos embeds")
+	async def json_help(self, interaction: discord.Interaction):
+		embed = discord.Embed(
+			title="📖 Como usar os modelos JSON de embeds",
+			description="Aqui está um exemplo de como montar um template JSON para o comando `/embed create`:",
+			colour=discord.Color.blurple()
+		)
+
+		exemplo_json = """```json
+	{
+	"title": "Título do Embed",
+	"description": "Descrição do Embed",
+	"color": "#5865F2",
+	"content": "Mensagem fora do embed",
+	"author": {
+		"name": "Autor",
+		"url": "https://example.com",
+		"icon_url": "https://link-da-imagem.com/icon.png"
+	},
+	"thumbnail": {
+		"url": "https://link-da-imagem.com/thumb.png"
+	},
+	"image": {
+		"url": "https://link-da-imagem.com/image.png"
+	},
+	"footer": {
+		"text": "Rodapé",
+		"icon_url": "https://link-da-imagem.com/footer.png"
+	},
+	"fields": [
+		{
+		"name": "Campo 1",
+		"value": "Valor do campo 1",
+		"inline": true
+		},
+		{
+		"name": "Campo 2",
+		"value": "Valor do campo 2",
+		"inline": false
+		}
+	]
+	}
+	```"""
+
+		embed.add_field(name="📝 Exemplo de JSON", value=exemplo_json, inline=False)
+		embed.add_field(
+			name="ℹ️ Observações",
+			value="• Os campos `author`, `thumbnail`, `image`, `footer` e `fields` são opcionais.\n"
+				"• A cor deve estar em formato hexadecimal (`#RRGGBB`).\n"
+				"• Você também pode usar o link de uma mensagem como template no comando `/embed create`.",
+			inline=False
+		)
+
+		await interaction.response.send_message(embed=embed, ephemeral=True)
