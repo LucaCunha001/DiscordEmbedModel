@@ -104,7 +104,7 @@ class EmbedModelCommands(app_commands.Group):
 		)
 
 		exemplo_json = """```json
-	{
+{
 	"title": "Título do Embed",
 	"description": "Descrição do Embed",
 	"color": "#5865F2",
@@ -136,7 +136,7 @@ class EmbedModelCommands(app_commands.Group):
 		"inline": false
 		}
 	]
-	}
+}
 	```"""
 
 		embed.add_field(name="📝 Exemplo de JSON", value=exemplo_json, inline=False)

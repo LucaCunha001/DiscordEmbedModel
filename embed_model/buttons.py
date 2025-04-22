@@ -30,16 +30,10 @@ class SendButton(discord.ui.Button):
 		self.msg = msg
 
 	async def callback(self, interaction: discord.Interaction):
-		await self.msg.channel.send(content=self.msg.content, embed=self.msg.embeds[0])
+		embed = self.msg.embeds[0]
+		embed.timestamp = discord.utils.utcnow() if embed.timestamp else None
+		await self.msg.channel.send(content=self.msg.content, embed=embed)
 		await interaction.response.send_message("Embed enviado com sucesso!", ephemeral=True)
-
-class CancelButton(discord.ui.Button):
-	def __init__(self, msg: discord.Message):
-		super().__init__(label="Cancelar", style=discord.ButtonStyle.red, emoji="❌")
-		self.msg = msg
-
-	async def callback(self, interaction: discord.Interaction):
-		await self.msg.delete()
 
 class AddFieldButton(discord.ui.Button):
 	def __init__(self, message: discord.Message):
