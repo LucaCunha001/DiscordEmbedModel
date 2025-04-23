@@ -120,7 +120,7 @@ class LinguagemSelect(discord.ui.Select):
 		js_code += f'	color: {'"#{:06X}"'.format(embed.colour.value) if embed.colour else 'null'},\n'
 		js_code += f'	timestamp: "{embed.timestamp.isoformat()}"' if embed.timestamp else ""
 		if embed.author:
-			js_code += f',\n	author: {{\n		name: "{embed.author.name}"'
+			js_code += f'	author: {{\n		name: "{embed.author.name}"'
 			if embed.author.url:
 				js_code += f',\n		url: "{embed.author.url}"'
 			if embed.author.icon_url:
