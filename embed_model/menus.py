@@ -62,7 +62,7 @@ class LinguagemSelect(discord.ui.Select):
 	async def callback(self, interaction: discord.Interaction):
 		embed = interaction.message.embeds[0]
 
-		descricao = embed.description.replace('\n', '\\n')
+		descricao = embed.description.replace('\n', '\\n') if embed.description else ""
 		python_code = f"discord.Embed(title=\"{embed.title}\", description=\"{descricao}\", timestamp={embed.timestamp}"
 		python_code += f", colour=discord.Color.from_str({'"#{:06X}"'.format(embed.colour)}))" if embed.colour else ")"
 		if embed.author:
